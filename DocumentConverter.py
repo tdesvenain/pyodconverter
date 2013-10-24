@@ -284,12 +284,12 @@ class DocumentConverter:
 
     def convert(self, inputFile, outputFile, paperSize, paperOrientation):
         
-        if PAPER_SIZE_MAP.has_key(paperSize) is False:
+        if not paperSize in PAPER_SIZE_MAP:
             raise Exception("The paper size given doesn't exist.")
         else:
             paperSize = PAPER_SIZE_MAP[paperSize]
         
-        if PAPER_ORIENTATION_MAP.has_key(paperOrientation) is False:
+        if not paperOrientation in PAPER_ORIENTATION_MAP:
             raise Exception("The paper orientation given doesn't exist.")
         else:
             paperOrientation = PAPER_ORIENTATION_MAP[paperOrientation]
@@ -302,7 +302,7 @@ class DocumentConverter:
         inputExt = self._getFileExt(inputFile)
         outputExt = self._getFileExt(outputFile);
         
-        if IMPORT_FILTER_MAP.has_key(inputExt):
+        if inputExt in IMPORT_FILTER_MAP:
             loadProperties.update(IMPORT_FILTER_MAP[inputExt])
         
         document = self.desktop.loadComponentFromURL(inputUrl, "_blank", 0, self._toProperties(loadProperties))
@@ -317,7 +317,7 @@ class DocumentConverter:
             '''
             If you wish convert a document to an image, so each page needs be converted to a individual image.
             '''
-            if IMAGES_MEDIA_TYPE.has_key(outputExt):
+            if outputExt in IMAGES_MEDIA_TYPE:
                 
                 drawPages = document.getDrawPages()
                 pagesTotal = drawPages.getCount()
@@ -358,7 +358,7 @@ class DocumentConverter:
             document.close(True)
 
     def _overridePageStyleProperties(self, document, family):
-        if PAGE_STYLE_OVERRIDE_PROPERTIES.has_key(family):
+        if family in PAGE_STYLE_OVERRIDE_PROPERTIES:
             styleFamilies = document.getStyleFamilies()
             if styleFamilies.hasByName('PageStyles'):
                 properties = PAGE_STYLE_OVERRIDE_PROPERTIES[family]
@@ -373,11 +373,11 @@ class DocumentConverter:
         try:
             propertiesByFamily = EXPORT_FILTER_MAP[outputExt]
         except KeyError:
-            raise DocumentConversionException, "unknown output format: '%s'" % outputExt
+            raise DocumentConversionException("unknown output format: '%s'" % outputExt)
         try:
             return propertiesByFamily[family]
         except KeyError:
-            raise DocumentConversionException, "unsupported conversion: from '%s' to '%s'" % (family, outputExt)
+            raise DocumentConversionException("unsupported conversion: from '%s' to '%s'" % (family, outputExt))
     
     def _detectFamily(self, document):
         if document.supportsService("com.sun.star.text.WebDocument"):
@@ -391,7 +391,7 @@ class DocumentConverter:
             return FAMILY_PRESENTATION
         if document.supportsService("com.sun.star.drawing.DrawingDocument"):
             return FAMILY_DRAWING
-        raise DocumentConversionException, "unknown document family: %s" % document
+        raise DocumentConversionException("unknown document family: %s" % document)
 
     def _getFileExt(self, path):
         ext = splitext(path)[1]
@@ -418,7 +418,7 @@ class DocumentConverter:
 
     def _dump(self, obj):
         for attr in dir(obj):
-            print "obj.%s = %s\n" % (attr, getattr(obj, attr))
+            print("obj.%s = %s\n" % (attr, getattr(obj, attr)))
 
 if __name__ == "__main__":
     
@@ -435,16 +435,16 @@ if __name__ == "__main__":
         parser.error("wrong number of arguments")
     
     if not isfile(args[0]):
-        print "No such input file: %s" % args[0]
+        print("No such input file: %s" % args[0])
         exit(1)
         
     try:
         converter = DocumentConverter()    
         converter.convert(args[0], args[1], options.paper_size, options.paper_orientation)
-    except DocumentConversionException, exception:
-        print "ERROR! " + str(exception)
+    except DocumentConversionException as exception:
+        print("ERROR! " + str(exception))
         exit(1)
-    except ErrorCodeIOException, exception:
-        print "ERROR! ErrorCodeIOException %d" % exception.ErrCode
+    except ErrorCodeIOException as exception:
+        print("ERROR! ErrorCodeIOException %d" % exception.ErrCode)
         exit(1)
 
