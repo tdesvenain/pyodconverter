@@ -272,13 +272,14 @@ class DocumentConversionException(Exception):
 
 class DocumentConverter:
     
-    def __init__(self, port=DEFAULT_OPENOFFICE_PORT):
+    def __init__(self, listener=('localhost', DEFAULT_OPENOFFICE_PORT)):
+        address, port = listener
         localContext = uno.getComponentContext()
         resolver = localContext.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", localContext)
         try:
-            self.context = resolver.resolve("uno:socket,host=localhost,port=%s;urp;StarOffice.ComponentContext" % port)
+            self.context = resolver.resolve("uno:socket,host={0},port={1};urp;StarOffice.ComponentContext".format(address, port))
         except NoConnectException:
-            raise DocumentConversionException, "failed to connect to OpenOffice.org on port %s" % port
+            raise DocumentConversionException("failed to connect to OpenOffice.org on {0}:{1}".format(address, port))
         self.desktop = self.context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", self.context)
 
     def convert(self, inputFile, outputFile, paperSize, paperOrientation):
