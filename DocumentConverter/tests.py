@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 from DocumentConverter import DocumentConverter, DocumentConversionException
 
@@ -15,3 +16,22 @@ class DocumentConverterTest(TestCase):
     output = "docs.pdf"
     with self.assertRaises(DocumentConversionException):
       self.converter.convert(input, output)
+
+  def test_convert_docx_to_pdf(self):
+    input = "data/document.docx"
+    output = "data/document.pdf"
+    result = self.converter.convert(input, output)
+    self.assertTrue(os.path.exists("data/document.pdf"))
+
+  def test_convert_odt_to_pdf(self):
+    input = "data/document.odt"
+    output = "data/document.pdf"
+    result = self.converter.convert(input, output)
+    self.assertTrue(os.path.exists("data/document.pdf"))
+
+  def tearDown(self):
+    """
+    Cleanup
+    """
+    if os.path.exists("data/document.pdf"):
+      os.remove("data/document.pdf")
