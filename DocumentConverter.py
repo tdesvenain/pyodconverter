@@ -1,4 +1,7 @@
-from DocumentConverter import DocumentConverter, DocumentConversionException, isfile
+from DocumentConverter import (
+    DocumentConverter, isfile,
+    DocumentConversionException, ErrorCodeIOException,
+)
 from sys import exit
 from optparse import OptionParser
 
