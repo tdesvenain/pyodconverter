@@ -282,7 +282,7 @@ class DocumentConverter:
             raise DocumentConversionException("failed to connect to OpenOffice.org on {0}:{1}".format(address, port))
         self.desktop = self.context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", self.context)
 
-    def convert(self, inputFile, outputFile, paperSize, paperOrientation):
+    def convert(self, inputFile, outputFile, paperSize="A4", paperOrientation="PORTRAIT"):
         
         if not paperSize in PAPER_SIZE_MAP:
             raise Exception("The paper size given doesn't exist.")
