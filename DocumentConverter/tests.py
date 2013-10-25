@@ -33,5 +33,5 @@ class DocumentConverterTest(TestCase):
     """
     Cleanup
     """
-    if os.path.exists("data/document.pdf"):
-      os.remove("data/document.pdf")
+    if os.path.exists("test_data/document.pdf"):
+      os.remove("test_data/document.pdf")
