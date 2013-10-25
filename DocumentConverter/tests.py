@@ -6,11 +6,11 @@ class DocumentConverterTest(TestCase):
   def setUp(self):
     self.converter = DocumentConverter(listener=('localhost', 2002))
 
-  def test_failed_to_connect(self):
+  def test_fail_connect(self):
     with self.assertRaises(DocumentConversionException):
       DocumentConverter(listener=('localhost', 1337))
 
-  def test_nonexisting_document(self):
+  def test_not_existing_document(self):
     input = "kittens.docx"
     output = "docs.pdf"
     with self.assertRaises(DocumentConversionException):
