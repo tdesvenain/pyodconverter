@@ -3,7 +3,7 @@ python:
   - 2.7
   - 3.3
 install:
-  apt-get install unoconv
+  sudo apt-get install unoconv
 before_install:
   unoconv -l -v & # start LibreOffice server
 script:
