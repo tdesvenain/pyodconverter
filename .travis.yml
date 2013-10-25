@@ -3,12 +3,12 @@ python:
   - 2.7
   - 3.3
 env:
-  UNO=python-uno
-  UNO=python-uno3
+  - UNO=python-uno
+  - UNO=python-uno3
 install:
-  sudo apt-get install unoconv
-  sudo apt-get install $UNO
+  - sudo apt-get install unoconv
+  - sudo apt-get install $UNO
 before_script:
-  unoconv -l -v & # start LibreOffice server
+  - unoconv -l -v & # start LibreOffice server
 script:
-  python -m unittest DocumentConverter.tests
+  - python -m unittest DocumentConverter.tests
