@@ -9,3 +9,9 @@ class DocumentConverterTest(TestCase):
   def test_failed_to_connect(self):
     with self.assertRaises(DocumentConversionException):
       DocumentConverter(listener=('localhost', 1337))
+
+  def test_nonexisting_document(self):
+    input = "kittens.docx"
+    output = "docs.pdf"
+    with self.assertRaises(DocumentConversionException):
+      self.converter.convert(input, output)
