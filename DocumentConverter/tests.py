@@ -18,16 +18,16 @@ class DocumentConverterTest(TestCase):
       self.converter.convert(input, output)
 
   def test_convert_docx_to_pdf(self):
-    input = "data/document.docx"
-    output = "data/document.pdf"
+    input = "test_data/document.docx"
+    output = "test_data/document.pdf"
     result = self.converter.convert(input, output)
-    self.assertTrue(os.path.exists("data/document.pdf"))
+    self.assertTrue(os.path.exists("test_data/document.pdf"))
 
   def test_convert_odt_to_pdf(self):
-    input = "data/document.odt"
-    output = "data/document.pdf"
+    input = "test_data/document.odt"
+    output = "test_data/document.pdf"
     result = self.converter.convert(input, output)
-    self.assertTrue(os.path.exists("data/document.pdf"))
+    self.assertTrue(os.path.exists("test_data/document.pdf"))
 
   def tearDown(self):
     """
