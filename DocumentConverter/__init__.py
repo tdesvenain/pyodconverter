@@ -305,7 +305,15 @@ class DocumentConverter:
         if inputExt in IMPORT_FILTER_MAP:
             loadProperties.update(IMPORT_FILTER_MAP[inputExt])
         
-        document = self.desktop.loadComponentFromURL(inputUrl, "_blank", 0, self._toProperties(loadProperties))
+        try:
+            document = self.desktop.loadComponentFromURL(inputUrl, "_blank", 0, self._toProperties(loadProperties))
+        except Exception as error:
+            """
+            Just remainder:
+            com.sun.star.lang.IllegalArgumentException: Unsupported URL
+            is like 404 Not Found
+            """
+            raise DocumentConversionException(str(error))
         try:
             document.refresh()
         except AttributeError:
