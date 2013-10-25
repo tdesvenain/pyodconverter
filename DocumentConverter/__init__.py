@@ -319,6 +319,9 @@ class DocumentConverter:
             '''
             if outputExt in IMAGES_MEDIA_TYPE:
                 
+                have_pages = getattr(document, 'getDrawPages', None)
+                if not have_pages:
+                    raise DocumentConversionException("document doesn have pages")
                 drawPages = document.getDrawPages()
                 pagesTotal = drawPages.getCount()
                 mediaType = IMAGES_MEDIA_TYPE[outputExt]
