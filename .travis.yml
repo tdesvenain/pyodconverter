@@ -4,7 +4,7 @@ python:
   - 3.3
 install:
   sudo apt-get install unoconv
-before_install:
+before_script:
   unoconv -l -v & # start LibreOffice server
 script:
   python -m unittest DocumentConverter.tests
