@@ -2,7 +2,7 @@
 # PyODConverter (Python OpenDocument Converter) v1.5 - 2013-01-07
 #
 # This script converts a document from one office format to another by
-# connecting to an OpenOffice.org instance via Python-UNO bridge.
+# connecting to an LibreOffice instance via Python-UNO bridge.
 #
 # Copyright (C) 2008-2013 Mirko Nasato
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl-2.1.html
@@ -279,7 +279,7 @@ class DocumentConverter:
         try:
             self.context = resolver.resolve("uno:socket,host={0},port={1};urp;StarOffice.ComponentContext".format(address, port))
         except NoConnectException:
-            raise DocumentConversionException("failed to connect to OpenOffice.org on {0}:{1}".format(address, port))
+            raise DocumentConversionException("failed to connect to LibreOffice on {0}:{1}".format(address, port))
         self.desktop = self.context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", self.context)
 
     def convert(self, inputFile, outputFile, paperSize="A4", paperOrientation="PORTRAIT"):
