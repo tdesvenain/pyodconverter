@@ -10,11 +10,11 @@ PyODConverter requires LibreOffice/OpenOffice.org to be running as a service
 and listening on port (by default) 2002; this can be achieved e.g. by starting
 it from the command line as
 ```
-	$ soffice --headless --nofirststartwizard "--accept=socket,host=localhost,port=2002;urp;StarOffice.Service"
+$ soffice --headless --nofirststartwizard "--accept=socket,host=localhost,port=2002;urp;StarOffice.Service"
 ```
 Or, if you have `unoconv` installed
 ```
-  $ unoconv -l -v
+$ unoconv -l -v
 ```
 
 ```python
