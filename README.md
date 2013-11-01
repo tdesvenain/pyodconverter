@@ -1,12 +1,9 @@
 ## PyODConverter
 =============
 
-PyODConverter (for Python OpenDocument Converter) is a Python script that
+PyODConverter (for Python OpenDocument Converter) is a Python package that
 automates office document conversions from the command line using
 LibreOffice or OpenOffice.org.
-
-The script was written as a simpler alternative to
-[JODConverter](http://code.google.com/p/jodconverter/) for command line usage.
 
 ## Usage
 -----
@@ -17,26 +14,24 @@ it from the command line as
 
 	$ soffice --headless --nofirststartwizard "--accept=socket,host=localhost,port=2002;urp;StarOffice.Service"
 
-The script expects exactly 2 parameters: an input and an output file names.
-The document formats are inferred from the file extensions.
+Or, if you have `unoconv` installed
 
-Since it uses the Python/UNO bridge, the script requires the UNO modules to be
-already present in your Python installation. Most of the time this means you
-need to use the Python version installed with OpenOffice.org, e.g. on Windows
+  $ unoconv -l -v
 
-    > "C:\Program Files\OpenOffice.org 3.1\program\python" DocumentConverter.py test.odt test.pdf
 
-or on Linux
 
-    $ /opt/openoffice.org3.1/program/python DocumentConverter.py test.odt test.pdf
+```python
+from DocumentConverter import DocumentConverter
 
-### Possible options are the following:
+listener = ('localhost', 2002)
+converter = DocumentConverter(listener)
 
-* **Page Orientation** - Set the page orientation `-o LANDSCAPE` or `--page-orientation LANDSCAPE` (defaults to PORTRAIT)
-* **Page Size** - Set the page size `-s A3` or `--page-size A3` (defaults to A4)
-
-If you want to write your own scripts in Python, PyODConverter can also act as
-a Python module, exporting a DocumentConverter class with a very simple API.
+# LibreOffice automatically converts relative paths
+converter.convert('kittens.docx', 'kittens.pdf')
+# So, if you run this code from /opt/ 
+# It'll be interpreted as this:
+# converter.convert('/opt/kittens.docx', '/opt/kittens.pdf')
+```
 
 ## ChangeLog
 ---------
