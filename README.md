@@ -4,18 +4,17 @@ PyODConverter (for Python OpenDocument Converter) is a Python package that
 automates office document conversions from the command line using
 LibreOffice or OpenOffice.org.
 
-## Usage
+## Setup
 
 PyODConverter requires LibreOffice/OpenOffice.org to be running as a service
 and listening on port (by default) 2002; this can be achieved e.g. by starting
 it from the command line as
 ```
-$ soffice --headless --nofirststartwizard "--accept=socket,host=localhost,port=2002;urp;StarOffice.Service"
-```
-Or, if you have `unoconv` installed
-```
+$ apt-get install unoconv
 $ unoconv -l -v
 ```
+
+## Usage
 
 ```python
 from DocumentConverter import DocumentConverter
@@ -28,6 +27,7 @@ converter.convert('kittens.docx', 'kittens.pdf')
 # So, if you run this code from /opt/ 
 # It'll be interpreted as this:
 # converter.convert('/opt/kittens.docx', '/opt/kittens.pdf')
+# That's all.
 ```
 
 ## ChangeLog
