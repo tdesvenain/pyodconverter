@@ -1,8 +1,7 @@
 ## PyODConverter
 
 PyODConverter (for Python OpenDocument Converter) is a Python package that
-automates office document conversions from the command line using
-LibreOffice or OpenOffice.org.
+automates office document conversions using LibreOffice or OpenOffice.org.
 
 ## Setup
 
@@ -17,7 +16,7 @@ $ unoconv -l -v
 ## Usage
 
 ```python
-from DocumentConverter import DocumentConverter
+from PyODConverter import DocumentConverter
 
 listener = ('localhost', 2002)
 converter = DocumentConverter(listener)
@@ -78,3 +77,4 @@ v1.0.0 - 2008-05-05
 
 * __mirkonasato__ <mirko.nasato@gmail.com>
 * __marcelaraujo__ <admin@marcelaraujo.me>
+* __dieselpoweredkitten__ <me@require.pm>

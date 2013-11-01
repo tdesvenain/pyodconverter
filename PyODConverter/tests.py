@@ -1,6 +1,6 @@
 import os
 from unittest import TestCase
-from DocumentConverter import DocumentConverter, DocumentConversionException
+from PyODConverter import DocumentConverter, DocumentConversionException
 
 class DocumentConverterTest(TestCase):
 
