@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='PyODConverter',
-      version='1.7',
+      version='1.8',
       author='PyODConverter contributors',
       author_email='me@require.pm',
       description='Python package to automate document conversions using LibreOffice/OpenOffice.org',

@@ -23,19 +23,37 @@ converter = DocumentConverter(listener)
 
 # LibreOffice automatically converts relative paths
 converter.convert('kittens.docx', 'kittens.pdf')
-# So, if you run this code from /opt/ 
+# So, if you run this code from /opt/
 # It'll be interpreted as this:
 # converter.convert('/opt/kittens.docx', '/opt/kittens.pdf')
 # That's all.
+
+# If you want some bookmarks or user fields to be filled by custom data on
+# generated document, you can give this data to converter like this :
+# converter.convert('/opt/kittens.docx', '/opt/kittens.pdf',
+#                   data={'age': 4, 'name': 'Felix',
+#                         'birthdate': datetime.date(2010, 12, 24),
+#                         )
+# (this is not available in command line)
+
 ```
 
 ## ChangeLog
+
+v1.8 - Unreleased
+
+* Tests pass under buildout context
+* We can fill bookmarks and user fields of generated document
+  with custom data given as a parameter of converter.
+
+v1.7 - 2013-11-01
 
 v1.6 - 2013-06-05
 * Fix support to print all sheets
 * Fix parameters to initialize SOffice service
 
 v1.5 - 2013-01-07
+
 * Adding method to be able to get file base name
 * Improvement files export from Presentation to Images. Now for each
   slide, an image will be created.
