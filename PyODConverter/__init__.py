@@ -11,6 +11,7 @@
 DEFAULT_OPENOFFICE_PORT = 2002
 
 import uno
+import datetime
 
 from os.path import abspath, isfile, splitext
 from com.sun.star.awt import Size
@@ -261,17 +262,17 @@ IMAGES_MEDIA_TYPE = {
 
 class DocumentConversionException(Exception):
 
-    def _get_message(self): 
+    def _get_message(self):
         return self._message
-    
-    def _set_message(self, message): 
+
+    def _set_message(self, message):
         self._message = message
-    
+
     message = property(_get_message, _set_message)
 
 
 class DocumentConverter:
-    
+
     def __init__(self, listener=('localhost', DEFAULT_OPENOFFICE_PORT)):
         address, port = listener
         localContext = uno.getComponentContext()
@@ -282,13 +283,15 @@ class DocumentConverter:
             raise DocumentConversionException("failed to connect to LibreOffice on {0}:{1}".format(address, port))
         self.desktop = self.context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", self.context)
 
-    def convert(self, inputFile, outputFile, paperSize="A4", paperOrientation="PORTRAIT"):
-        
+    def convert(self, inputFile, outputFile,
+                paperSize="A4", paperOrientation="PORTRAIT",
+                data=None):
+
         if not paperSize in PAPER_SIZE_MAP:
             raise Exception("The paper size given doesn't exist.")
         else:
             paperSize = PAPER_SIZE_MAP[paperSize]
-        
+
         if not paperOrientation in PAPER_ORIENTATION_MAP:
             raise Exception("The paper orientation given doesn't exist.")
         else:
@@ -298,13 +301,13 @@ class DocumentConverter:
         outputUrl = self._toFileUrl(outputFile)
 
         loadProperties = { "Hidden": True }
-        
+
         inputExt = self._getFileExt(inputFile)
         outputExt = self._getFileExt(outputFile);
-        
+
         if inputExt in IMPORT_FILTER_MAP:
             loadProperties.update(IMPORT_FILTER_MAP[inputExt])
-        
+
         try:
             document = self.desktop.loadComponentFromURL(inputUrl, "_blank", 0, self._toProperties(loadProperties))
         except Exception as error:
@@ -319,14 +322,17 @@ class DocumentConverter:
         except AttributeError:
             pass
 
+        if data is not None:
+            self._fillData(document, data)
+
         family = self._detectFamily(document)
-        
+
         try:
             '''
             If you wish convert a document to an image, so each page needs be converted to a individual image.
             '''
             if outputExt in IMAGES_MEDIA_TYPE:
-                
+
                 have_pages = getattr(document, 'getDrawPages', None)
                 if not have_pages:
                     raise DocumentConversionException("document doesn have pages")
@@ -335,38 +341,70 @@ class DocumentConverter:
                 mediaType = IMAGES_MEDIA_TYPE[outputExt]
                 fileBasename = self._getFileBasename(outputUrl)
                 graphicExport = self.context.ServiceManager.createInstanceWithContext("com.sun.star.drawing.GraphicExportFilter", self.context)
-                
+
                 for pageIndex in range(pagesTotal):
-                    
+
                     page = drawPages.getByIndex(pageIndex)
-                    fileName = "%s-%d.%s" % (self._getFileBasename(outputUrl), pageIndex, outputExt)
-                    
+                    fileName = "%s-%d.%s" % (fileBasename, pageIndex, outputExt)
+
                     graphicExport.setSourceDocument( page )
-                    
+
                     props = {
                         "MediaType": mediaType,
                         "URL": fileName
                     }
-                    
+
                     graphicExport.filter( self._toProperties( props ) )
             else:
-                
+
                 self._overridePageStyleProperties(document, family)
-            
+
                 storeProperties = self._getStoreProperties(document, outputExt)
-                
+
                 printConfigs = {
                     'AllSheets': True,
                     'Size': paperSize,
                     'PaperFormat': USER,
                     'PaperOrientation': paperOrientation
                 }
-                
+
                 document.setPrinter( self._toProperties( printConfigs ) )
-            
+
                 document.storeToURL(outputUrl, self._toProperties(storeProperties))
         finally:
             document.close(True)
+
+    def _fillData(self, document, data):
+        """Fill bookmarks and fields with data
+        """
+
+        try:
+            bookmarks = document.getBookmarks()
+            element_names = bookmarks.getElementNames()
+            if element_names: # when no bookmark, we get a <ByteString ''>
+                for name in element_names:
+                    if name in data:
+                        bookmark = bookmarks.getByName(name)
+                        xfound = bookmark.getAnchor()
+                        xfound.setString(data[name])
+
+            textfieldmasters = document.getTextFieldMasters()
+            element_names = textfieldmasters.getElementNames()
+            if element_names:
+                for name in element_names:
+                    key = name.split('.')[-1]
+                    if key in data:
+                        value = data[key]
+                        if isinstance(value, datetime.date):
+                            value = (value - datetime.date(1899, 12, 30)).days
+
+                        value = str(value)
+                        textfieldmaster = textfieldmasters.getByName(name)
+                        textfieldmaster.setPropertyValue('Content', value)
+
+                document.getTextFields().refresh()
+        except AttributeError:  # xsl file don't have getBookmarks?
+            pass
 
     def _overridePageStyleProperties(self, document, family):
         if family in PAGE_STYLE_OVERRIDE_PROPERTIES:
@@ -378,7 +416,7 @@ class DocumentConverter:
                     pageStyle = pageStyles.getByName(styleName)
                     for name, value in properties.items():
                         pageStyle.setPropertyValue(name, value)
-        
+
     def _getStoreProperties(self, document, outputExt):
         family = self._detectFamily(document)
         try:
@@ -389,7 +427,7 @@ class DocumentConverter:
             return propertiesByFamily[family]
         except KeyError:
             raise DocumentConversionException("unsupported conversion: from '%s' to '%s'" % (family, outputExt))
-    
+
     def _detectFamily(self, document):
         if document.supportsService("com.sun.star.text.WebDocument"):
             return FAMILY_WEB
@@ -408,12 +446,12 @@ class DocumentConverter:
         ext = splitext(path)[1]
         if ext is not None:
             return ext[1:].lower()
-    
+
     def _getFileBasename(self, path):
         name = splitext(path)[0]
         if name is not None:
-            return name    
-    
+            return name
+
     def _toFileUrl(self, path):
         return uno.systemPathToFileUrl(abspath(path))
 
@@ -421,10 +459,11 @@ class DocumentConverter:
         props = []
         for key in options:
             if isinstance(options[key], dict):
-                property = PropertyValue(key, 0, uno.Any("[]com.sun.star.beans.PropertyValue", (self._toProperties(options[key]))), 0)
+                prop = PropertyValue(key, 0, uno.Any("[]com.sun.star.beans.PropertyValue",
+                                                     (self._toProperties(options[key]))), 0)
             else:
-                property = PropertyValue(key, 0, options[key], 0)
-            props.append(property)
+                prop = PropertyValue(key, 0, options[key], 0)
+            props.append(prop)
         return tuple(props)
 
     def _dump(self, obj):

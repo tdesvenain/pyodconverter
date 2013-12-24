@@ -1,4 +1,6 @@
 import os
+import subprocess
+import datetime
 from unittest import TestCase
 from PyODConverter import DocumentConverter, DocumentConversionException
 
@@ -8,6 +10,7 @@ TEST_DATA_PATH = os.path.normpath(os.path.join(os.path.dirname(__file__),
 ODT_FILE_PATH = os.path.join(TEST_DATA_PATH, 'document.odt')
 DOCX_FILE_PATH = os.path.join(TEST_DATA_PATH, 'document.docx')
 PDF_FILE_PATH = os.path.join(TEST_DATA_PATH, 'document.pdf')
+TXT_FILE_PATH = os.path.join(TEST_DATA_PATH, 'document.txt')
 
 
 class DocumentConverterTest(TestCase):
@@ -31,9 +34,28 @@ class DocumentConverterTest(TestCase):
         self.converter.convert(ODT_FILE_PATH, PDF_FILE_PATH)
         self.assertTrue(os.path.exists(PDF_FILE_PATH))
 
+    def test_fill_data(self):
+        self.converter.convert(ODT_FILE_PATH, PDF_FILE_PATH,
+                               data={'my_bookmark': 'It rocks !',
+                                     'my_field': 'Just amazing !',
+                                     'my_number': 12,
+                                     'my_date': datetime.date(2010, 12, 24),
+                                     })
+
+        self.assertTrue(os.path.exists(PDF_FILE_PATH))
+        subprocess.call(['pdftotext', PDF_FILE_PATH, TXT_FILE_PATH])
+        txt = open(TXT_FILE_PATH).read()
+        self.assertIn('It rocks !', txt)
+        self.assertIn('Just amazing !', txt)
+        self.assertIn('12,00', txt)
+        self.assertIn('24.12.2010', txt)
+
     def tearDown(self):
         """
         Cleanup
         """
         if os.path.exists(PDF_FILE_PATH):
             os.remove(PDF_FILE_PATH)
+
+        if os.path.exists(TXT_FILE_PATH):
+            os.remove(TXT_FILE_PATH)
