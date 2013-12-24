@@ -23,13 +23,16 @@ converter = DocumentConverter(listener)
 
 # LibreOffice automatically converts relative paths
 converter.convert('kittens.docx', 'kittens.pdf')
-# So, if you run this code from /opt/ 
+# So, if you run this code from /opt/
 # It'll be interpreted as this:
 # converter.convert('/opt/kittens.docx', '/opt/kittens.pdf')
 # That's all.
 ```
 
 ## ChangeLog
+
+v1.7
+* Tests pass under buildout context
 
 v1.6 - 2013-06-05
 * Fix support to print all sheets
