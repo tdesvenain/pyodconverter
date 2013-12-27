@@ -10,16 +10,8 @@
 #
 DEFAULT_OPENOFFICE_PORT = 2002
 
-import uno
 import datetime
-
 from os.path import abspath, isfile, splitext
-from com.sun.star.awt import Size
-from com.sun.star.beans import PropertyValue
-from com.sun.star.view.PaperFormat import USER
-from com.sun.star.view.PaperOrientation import PORTRAIT, LANDSCAPE
-from com.sun.star.task import ErrorCodeIOException
-from com.sun.star.connection import NoConnectException
 
 FAMILY_TEXT = "Text"
 FAMILY_WEB = "Web"
@@ -35,21 +27,14 @@ FAMILY_DRAWING = "Drawing"
 See http://www.openoffice.org/api/docs/common/ref/com/sun/star/view/PaperFormat.html
 '''
 PAPER_SIZE_MAP = {
-    "A5": Size(14800,21000),
-    "A4": Size(21000,29700),
-    "A3": Size(29700,42000),
-    "LETTER": Size(21590,27940),
-    "LEGAL": Size(21590,35560),
-    "TABLOID": Size(27900,43200)
+    "A5": (14800,21000),
+    "A4": (21000,29700),
+    "A3": (29700,42000),
+    "LETTER": (21590,27940),
+    "LEGAL": (21590,35560),
+    "TABLOID": (27900,43200)
 }
 
-'''
-See http://www.openoffice.org/api/docs/common/ref/com/sun/star/view/PaperOrientation.html
-'''
-PAPER_ORIENTATION_MAP = {
-    "PORTRAIT": PORTRAIT,
-    "LANDSCAPE": LANDSCAPE
-}
 
 '''
 See http://wiki.services.openoffice.org/wiki/Framework/Article/Filter
@@ -274,6 +259,8 @@ class DocumentConversionException(Exception):
 class DocumentConverter:
 
     def __init__(self, listener=('localhost', DEFAULT_OPENOFFICE_PORT)):
+        import uno
+        from com.sun.star.connection import NoConnectException
         address, port = listener
         localContext = uno.getComponentContext()
         resolver = localContext.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", localContext)
@@ -286,12 +273,21 @@ class DocumentConverter:
     def convert(self, inputFile, outputFile,
                 paperSize="A4", paperOrientation="PORTRAIT",
                 data=None):
+        import uno
 
         if not paperSize in PAPER_SIZE_MAP:
             raise Exception("The paper size given doesn't exist.")
         else:
-            paperSize = PAPER_SIZE_MAP[paperSize]
+            from com.sun.star.awt import Size
+            paperSize = Size(*PAPER_SIZE_MAP[paperSize])
 
+
+        from com.sun.star.view.PaperOrientation import PORTRAIT, LANDSCAPE
+        #See http://www.openoffice.org/api/docs/common/ref/com/sun/star/view/PaperOrientation.html
+        PAPER_ORIENTATION_MAP = {
+            "PORTRAIT": PORTRAIT,
+            "LANDSCAPE": LANDSCAPE
+        }
         if not paperOrientation in PAPER_ORIENTATION_MAP:
             raise Exception("The paper orientation given doesn't exist.")
         else:
@@ -360,7 +356,7 @@ class DocumentConverter:
                 self._overridePageStyleProperties(document, family)
 
                 storeProperties = self._getStoreProperties(document, outputExt)
-
+                from com.sun.star.view.PaperFormat import USER
                 printConfigs = {
                     'AllSheets': True,
                     'Size': paperSize,
@@ -453,9 +449,12 @@ class DocumentConverter:
             return name
 
     def _toFileUrl(self, path):
+        import uno
         return uno.systemPathToFileUrl(abspath(path))
 
     def _toProperties(self, options):
+        import uno
+        from com.sun.star.beans import PropertyValue
         props = []
         for key in options:
             if isinstance(options[key], dict):

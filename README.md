@@ -45,6 +45,7 @@ v1.8 - Unreleased
 * Tests pass under buildout context
 * We can fill bookmarks and user fields of generated document
   with custom data given as a parameter of converter.
+* Avoid border effects of uno import on python import system
 
 v1.7 - 2013-11-01
 
