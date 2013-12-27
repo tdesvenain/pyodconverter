@@ -373,7 +373,6 @@ class DocumentConverter:
     def _fillData(self, document, data):
         """Fill bookmarks and fields with data
         """
-
         try:
             bookmarks = document.getBookmarks()
             element_names = bookmarks.getElementNames()
@@ -382,7 +381,7 @@ class DocumentConverter:
                     if name in data:
                         bookmark = bookmarks.getByName(name)
                         xfound = bookmark.getAnchor()
-                        xfound.setString(data[name])
+                        xfound.setString(data[name] or "")
 
             textfieldmasters = document.getTextFieldMasters()
             element_names = textfieldmasters.getElementNames()
@@ -391,7 +390,9 @@ class DocumentConverter:
                     key = name.split('.')[-1]
                     if key in data:
                         value = data[key]
-                        if isinstance(value, datetime.date):
+                        if value is None:
+                            value = ""
+                        elif isinstance(value, datetime.date):
                             value = (value - datetime.date(1899, 12, 30)).days
 
                         value = str(value)
