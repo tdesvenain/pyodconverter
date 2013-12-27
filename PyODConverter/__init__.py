@@ -241,6 +241,7 @@ IMAGES_MEDIA_TYPE = {
     "gif": "image/gif"
 }
 
+WRITEABLE_DOCUMENT_PROPERTIES = ['Author', 'Description', 'Subject', 'Title']
 #-------------------#
 # Configuration End #
 #-------------------#
@@ -305,7 +306,8 @@ class DocumentConverter:
             loadProperties.update(IMPORT_FILTER_MAP[inputExt])
 
         try:
-            document = self.desktop.loadComponentFromURL(inputUrl, "_blank", 0, self._toProperties(loadProperties))
+            document = self.desktop.loadComponentFromURL(inputUrl, "_blank", 0,
+                                            self._toProperties(loadProperties))
         except Exception as error:
             """
             Just remainder:
@@ -374,6 +376,11 @@ class DocumentConverter:
         """Fill bookmarks and fields with data
         """
         try:
+            document_properties = document.getDocumentProperties()
+            for property_id in WRITEABLE_DOCUMENT_PROPERTIES:
+                if property_id in data:
+                    setattr(document_properties, property_id, data[property_id])
+
             bookmarks = document.getBookmarks()
             element_names = bookmarks.getElementNames()
             if element_names: # when no bookmark, we get a <ByteString ''>

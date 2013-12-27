@@ -36,10 +36,11 @@ class DocumentConverterTest(TestCase):
 
     def test_fill_data(self):
         self.converter.convert(ODT_FILE_PATH, PDF_FILE_PATH,
-                               data={'my_bookmark': 'It rocks !',
-                                     'my_field': 'Just amazing !',
+                               data={'my_bookmark': 'It rocks !', # bookmark
+                                     'my_field': 'Just amazing !', # custom fields
                                      'my_number': 12,
                                      'my_date': datetime.date(2010, 12, 24),
+                                     'Title': "Absolutely fabulous !", # property
                                      })
 
         self.assertTrue(os.path.exists(PDF_FILE_PATH))
@@ -49,6 +50,7 @@ class DocumentConverterTest(TestCase):
         self.assertIn('Just amazing !', txt)
         self.assertIn('12,00', txt)
         self.assertIn('24.12.2010', txt)
+        self.assertIn('Absolutely fabulous', txt)
 
     def tearDown(self):
         """
