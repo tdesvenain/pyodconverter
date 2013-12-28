@@ -1,6 +1,8 @@
+import uno
+from com.sun.star.task import ErrorCodeIOException
 from DocumentConverter import (
     DocumentConverter, isfile,
-    DocumentConversionException, ErrorCodeIOException,
+    DocumentConversionException,
 )
 from sys import exit
 from optparse import OptionParser
@@ -13,13 +15,13 @@ parser.add_option("-o", "--paper-orientation", default="PORTRAIT", action="store
 
 if len(args) != 2:
     parser.error("wrong number of arguments")
-    
+
 if not isfile(args[0]):
     print("No such input file: %s" % args[0])
     exit(1)
-    
+
 try:
-    converter = DocumentConverter()    
+    converter = DocumentConverter()
     converter.convert(args[0], args[1], options.paper_size, options.paper_orientation)
 except DocumentConversionException as exception:
     print("ERROR! " + str(exception))
