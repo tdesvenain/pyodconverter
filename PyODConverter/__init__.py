@@ -241,7 +241,8 @@ IMAGES_MEDIA_TYPE = {
     "gif": "image/gif"
 }
 
-WRITEABLE_DOCUMENT_PROPERTIES = ['Author', 'Description', 'Subject', 'Title']
+WRITEABLE_DOCUMENT_PROPERTIES = ['Author', 'Description', 'Keywords',
+                                 'Subject', 'Title']
 #-------------------#
 # Configuration End #
 #-------------------#

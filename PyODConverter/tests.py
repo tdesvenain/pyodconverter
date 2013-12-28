@@ -41,6 +41,7 @@ class DocumentConverterTest(TestCase):
                                      'my_number': 12,
                                      'my_date': datetime.date(2010, 12, 24),
                                      'Title': "Absolutely fabulous !", # property
+                                     'Keywords': ('nice', 'good'),
                                      })
 
         self.assertTrue(os.path.exists(PDF_FILE_PATH))
@@ -51,6 +52,7 @@ class DocumentConverterTest(TestCase):
         self.assertIn('12,00', txt)
         self.assertIn('24.12.2010', txt)
         self.assertIn('Absolutely fabulous', txt)
+        self.assertIn('nice, good', txt)
 
     def tearDown(self):
         """
