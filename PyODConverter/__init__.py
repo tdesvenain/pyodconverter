@@ -10,6 +10,7 @@
 #
 DEFAULT_OPENOFFICE_PORT = 2002
 
+from numbers import Number
 import datetime
 from os.path import abspath, isfile, splitext
 
@@ -404,8 +405,8 @@ class DocumentConverter:
                             value = (value - datetime.date(1899, 12, 30)).days
 
                         textfieldmaster = textfieldmasters.getByName(name)
-                        if isinstance(value, float):
-                            # with float numbers we work with Value
+                        if isinstance(value, Number):
+                            # with numbers we work with Value
                             textfieldmaster.setPropertyValue('Value', value)
                         else:
                             textfieldmaster.setPropertyValue('Content',
