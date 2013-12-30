@@ -403,9 +403,13 @@ class DocumentConverter:
                         elif isinstance(value, datetime.date):
                             value = (value - datetime.date(1899, 12, 30)).days
 
-                        value = str(value)
                         textfieldmaster = textfieldmasters.getByName(name)
-                        textfieldmaster.setPropertyValue('Content', value)
+                        if isinstance(value, float):
+                            # with float numbers we work with Value
+                            textfieldmaster.setPropertyValue('Value', value)
+                        else:
+                            textfieldmaster.setPropertyValue('Content',
+                                                             str(value))
 
                 document.getTextFields().refresh()
         except AttributeError:  # xsl file don't have getBookmarks?
