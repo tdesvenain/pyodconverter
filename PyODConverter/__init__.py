@@ -10,6 +10,7 @@
 #
 DEFAULT_OPENOFFICE_PORT = 2002
 
+from numbers import Number
 import datetime
 from os.path import abspath, isfile, splitext
 
@@ -403,9 +404,13 @@ class DocumentConverter:
                         elif isinstance(value, datetime.date):
                             value = (value - datetime.date(1899, 12, 30)).days
 
-                        value = str(value)
                         textfieldmaster = textfieldmasters.getByName(name)
-                        textfieldmaster.setPropertyValue('Content', value)
+                        if isinstance(value, Number):
+                            # with numbers we work with Value
+                            textfieldmaster.setPropertyValue('Value', value)
+                        else:
+                            textfieldmaster.setPropertyValue('Content',
+                                                             str(value))
 
                 document.getTextFields().refresh()
         except AttributeError:  # xsl file don't have getBookmarks?
