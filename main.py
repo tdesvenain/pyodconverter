@@ -1,6 +1,6 @@
 import uno
 from com.sun.star.task import ErrorCodeIOException
-from DocumentConverter import (
+from PyODConverter import (
     DocumentConverter, isfile,
     DocumentConversionException,
 )
