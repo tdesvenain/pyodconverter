@@ -8,6 +8,9 @@
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl-2.1.html
 # - or any later version.
 #
+
+__version__ = "1.8"
+
 DEFAULT_OPENOFFICE_PORT = 2002
 
 from numbers import Number
@@ -316,6 +319,7 @@ class DocumentConverter:
             com.sun.star.lang.IllegalArgumentException: Unsupported URL
             is like 404 Not Found
             """
+            print(error)
             raise DocumentConversionException(str(error))
         try:
             document.refresh()
