@@ -30,10 +30,11 @@ converter.convert('kittens.docx', 'kittens.pdf')
 
 # If you want some bookmarks or user fields to be filled by custom data on
 # generated document, you can give this data to converter like this :
-# converter.convert('/opt/kittens.docx', '/opt/kittens.pdf',
-#                   data={'age': 4, 'name': 'Felix',
-#                         'birthdate': datetime.date(2010, 12, 24),
-#                         )
+converter.convert('/opt/kittens.docx', '/opt/kittens.pdf',
+                  data={'age': 4, 
+                        'name': 'Felix',
+                        'birthdate': datetime.date(2010, 12, 24)},
+                  )
 # (this is not available in command line)
 
 ```
@@ -97,3 +98,4 @@ v1.0.0 - 2008-05-05
 * __mirkonasato__ <mirko.nasato@gmail.com>
 * __marcelaraujo__ <admin@marcelaraujo.me>
 * __dieselpoweredkitten__ <me@require.pm>
+* __Thomas Desvenain__ <thomas.desvenain@gmail.com>
