@@ -19,5 +19,6 @@ setup(name='PyODConverter',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.3',
       ],
+      test_suite='PyODConverter.tests',
       platforms=['All'],
       )
